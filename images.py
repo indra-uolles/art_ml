@@ -4,6 +4,7 @@ from colormath.color_objects import sRGBColor, LCHuvColor
 from colormath.color_conversions import convert_color
 import numpy as np
 from PIL import Image
+from functools import cmp_to_key
 
 def get_rgb_colors_arr(steps):
     rgb_colors = []
@@ -81,6 +82,22 @@ def filter_rgb_colors_by_hue(rgb_colors, hue):
         if (belongs_to_hue(lch_color, hue)):
             filtered_rgb_colors.append(rgb_color)
     return filtered_rgb_colors
+
+def filter_rgb_colors_by_lightness(rgb_colors, l, delta):
+    filtered_rgb_colors = []
+    for rgb_color in rgb_colors:
+        lch_color = rgb2lch(rgb_color[0], rgb_color[1], rgb_color[2])
+        if (abs(lch_color.lch_l - l) <= delta):
+            filtered_rgb_colors.append(rgb_color)
+    return filtered_rgb_colors
+
+def sort_rgb_colors_by_chroma(rgb_colors):
+    def compare(i1, i2):
+        lch_color1 = rgb2lch(i1[0], i1[1], i1[2])
+        lch_color2 = rgb2lch(i2[0], i2[1], i2[2])
+        return lch_color2.lch_c - lch_color1.lch_c
+    rgb_colors.sort(key=cmp_to_key(compare))
+    return rgb_colors
 
 def generate_rgb_image_arr(width, height, rgb_color):
     rgb_image = np.zeros((width, height, 3), dtype=np.uint8)

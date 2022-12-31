@@ -30,9 +30,18 @@ class TestImages(unittest.TestCase):
 
     def test_generate_rgb_image_arr(self):
         images.show_image(sRGBColor(128, 255, 0), 100, 100)
-        image = images.generate_rgb_image_arr(1, 1, [128, 255, 0])
+        image = images.generate_rgb_image_arr(1, 1, sRGBColor(128, 255, 0))
         np.testing.assert_array_equal(image, [[[128, 255, 0]]])
 
+    def test_filter_rgb_colors_by_lightness(self):
+       rgb_colors = [[255, 0, 0], [255, 128, 0], [255, 255, 0], [128, 255, 0], [0, 196, 92]]
+       filtered_rgb_colors = images.filter_rgb_colors_by_lightness(rgb_colors, 69.6, 0.05)
+       np.testing.assert_array_equal(filtered_rgb_colors, [[0, 196, 92]])
+
+    def test_sort_rgb_colors_by_chroma(self):
+        rgb_colors = [[126, 239, 160], [68, 240, 120], [115, 239, 153], [93, 240, 138]]
+        sorted_rgb_colors = images.sort_rgb_colors_by_chroma(rgb_colors)
+        np.testing.assert_array_equal(sorted_rgb_colors, [[68, 240, 120], [93, 240, 138], [115, 239, 153], [126, 239, 160]])
 
 if __name__ == "__main__":
     unittest.main()
