@@ -4,7 +4,7 @@
 import unittest
 import images as images
 import numpy as np
-from colormath.color_objects import LCHuvColor
+from colormath.color_objects import LCHuvColor, sRGBColor
 
 class TestImages(unittest.TestCase):
     def test_get_rgb_colors_arr(self):
@@ -27,6 +27,12 @@ class TestImages(unittest.TestCase):
         ]
         filtered_rgb_colors = images.filter_rgb_colors_by_hue(rgb_colors, 'YG')
         np.testing.assert_allclose(filtered_rgb_colors, [[128, 255, 0], [0, 255, 0], [0, 255, 128]])
+
+    def test_generate_rgb_image_arr(self):
+        images.show_image(sRGBColor(128, 255, 0), 100, 100)
+        image = images.generate_rgb_image_arr(1, 1, [128, 255, 0])
+        np.testing.assert_array_equal(image, [[[128, 255, 0]]])
+
 
 if __name__ == "__main__":
     unittest.main()

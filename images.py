@@ -1,8 +1,9 @@
  # -*- coding: utf-8 -*-
 
-from colormath.color_objects import LCHabColor, LabColor, AdobeRGBColor, sRGBColor, LCHuvColor
+from colormath.color_objects import sRGBColor, LCHuvColor
 from colormath.color_conversions import convert_color
 import numpy as np
+from PIL import Image
 
 def get_rgb_colors_arr(steps):
     rgb_colors = []
@@ -80,3 +81,17 @@ def filter_rgb_colors_by_hue(rgb_colors, hue):
         if (belongs_to_hue(lch_color, hue)):
             filtered_rgb_colors.append(rgb_color)
     return filtered_rgb_colors
+
+def generate_rgb_image_arr(width, height, rgb_color):
+    rgb_image = np.zeros((width, height, 3), dtype=np.uint8)
+    for x in range(width):
+        for y in range(height):
+            rgb_image[x, y, 0] = rgb_color.rgb_r
+            rgb_image[x, y, 1] = rgb_color.rgb_g
+            rgb_image[x, y, 2] = rgb_color.rgb_b
+    return rgb_image
+
+def show_image(rgb_color, width, height):
+    image_arr_rgb = generate_rgb_image_arr(width, height, rgb_color)
+    image = Image.fromarray(image_arr_rgb).convert('RGBA')
+    image.show()
