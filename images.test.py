@@ -2,33 +2,31 @@
 # python images.test.py
 
 import unittest
-import images
+import images as images
+import numpy as np
+from colormath.color_objects import LCHuvColor
 
 class TestImages(unittest.TestCase):
-    def test_intensity():
-        intensive_warm_green = [68, 220, 101]
-        less_intensive_warm_green = [63, 186, 106]
-        intensive_yellow = [225, 201, 40]
-        less_intensive_yellow = [204, 178, 18]
-        intensive_orange = [250, 122, 5]
-        less_intensive_orange = [198, 125, 0]
+    def test_get_rgb_colors_arr(self):
+        rgb_colors = images.get_rgb_colors_arr([0, 20])
+        np.testing.assert_array_equal(rgb_colors, [[0, 0, 0], [0, 0, 20], [0, 20, 0], [0, 20, 20], [20, 0, 0], [20, 0, 20], [20, 20, 0], [20, 20, 20]])
 
-        assert images.get_color_intensity(intensive_warm_green) == 160.986, 'should be 160.986'
-        assert images.get_color_intensity(intensive_yellow) == 189.822, 'should be 189.822'
-        assert images.get_color_intensity(intensive_orange) == 146.93399999999997, 'should be 146.93399999999997'
+    def test_rgb2lch(self):
+        np.testing.assert_allclose(images.rgb2lch(0, 196, 92).get_value_tuple(), [69.647286,  87.940279, 135.733355])
 
-        assert images.get_color_intensity(less_intensive_warm_green) == 140.10299999999998, 'should be 140.10299999999998'
-        assert images.get_color_intensity(less_intensive_yellow) == 167.53399999999996, 'should be 167.53399999999996'
-        assert images.get_color_intensity(less_intensive_orange) == 132.577, 'should be 132.577'
+    def test_lch2hue(self):
+        self.assertEqual(images.lch2hue(LCHuvColor(69.647286,  87.940279, 135.733355)), 'YG')
 
-        assert images.get_color_intensity_2(intensive_warm_green) == 129.66666666666666, 'should be 129.66666666666666'
-        assert images.get_color_intensity_2(intensive_yellow) == 155.33333333333334, 'should be 155.33333333333334'
-        assert images.get_color_intensity_2(intensive_orange) == 125.66666666666667, 'should be 125.66666666666667'
+    def test_belongs_to_hue(self):
+        self.assertTrue(images.belongs_to_hue(LCHuvColor(69.647286,  87.940279, 135.733355), 'YG'))
 
-        assert images.get_color_intensity_2(less_intensive_warm_green) == 118.33333333333333, 'should be 118.33333333333333'
-        assert images.get_color_intensity_2(less_intensive_yellow) == 133.33333333333334, 'should be 133.33333333333334'
-        assert images.get_color_intensity_2(less_intensive_orange) == 107.66666666666667, 'should be 107.66666666666667'
-
+    def test_filter_rgb_colors_by_hue(self):
+        rgb_colors = [
+            [255, 0, 0], [255, 128, 0], [255, 255, 0], [128, 255, 0], [0, 255, 0], [0, 255, 128],
+            [0, 255, 255], [0, 128, 255], [0, 0, 255], [127, 0, 255], [255, 0, 255], [255, 0, 127]
+        ]
+        filtered_rgb_colors = images.filter_rgb_colors_by_hue(rgb_colors, 'YG')
+        np.testing.assert_allclose(filtered_rgb_colors, [[128, 255, 0], [0, 255, 0], [0, 255, 128]])
 
 if __name__ == "__main__":
-    TestImages.test_intensity()
+    unittest.main()
