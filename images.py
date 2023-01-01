@@ -1,9 +1,9 @@
  # -*- coding: utf-8 -*-
 
-from colormath.color_objects import sRGBColor, LCHuvColor
+from colormath.color_objects import sRGBColor, LCHabColor, LabColor
 from colormath.color_conversions import convert_color
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFont, ImageDraw
 from functools import cmp_to_key
 
 def get_rgb_colors_arr(steps):
@@ -15,8 +15,9 @@ def get_rgb_colors_arr(steps):
     return rgb_colors
 
 def rgb2lch(r, g, b):
-    lch_color = convert_color(sRGBColor(r/255, g/255, b/255), LCHuvColor)
-    return lch_color
+    lab_color = convert_color(sRGBColor(r/255, g/255, b/255), LabColor)
+    lch_color = convert_color(lab_color, LCHabColor)
+    return lch_color 
 
 def lch2hue(lch_color):
     h = lch_color.lch_h
@@ -112,3 +113,18 @@ def show_image(rgb_color, width, height):
     image_arr_rgb = generate_rgb_image_arr(width, height, rgb_color)
     image = Image.fromarray(image_arr_rgb).convert('RGBA')
     image.show()
+    
+def get_label_for_image(rgb_color):
+    lch_color = rgb2lch(rgb_color.rgb_r, rgb_color.rgb_g, rgb_color.rgb_b)
+    phrase = str(round(rgb_color.rgb_r)) + ',' + str(round(rgb_color.rgb_g)) + ',' + str(round(rgb_color.rgb_b)) + '\n'
+    phrase += str(round(lch_color.lch_l)) + ',' + str(round(lch_color.lch_c)) + ',' + str(round(lch_color.lch_h))
+    return phrase
+
+def get_rgb_image_with_label(width, height, rgb_color):
+    image_arr_rgb = generate_rgb_image_arr(width, height, rgb_color)
+    image = Image.fromarray(image_arr_rgb).convert('RGBA')
+    label = get_label_for_image(rgb_color)
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype("Arial", 15)
+    draw.text((20, 30), label, (255,255,255), font=font)
+    return image
