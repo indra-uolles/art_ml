@@ -1,5 +1,3 @@
-`images.show_hue_swatch(hue)` will show a part of colors palette like this`
+`images.show_ch_swatch(x)` will show color palette for given chroma (saturation):
 
-`hue` can be `VR`, `R`, etc. For possible values take a look at `images.lch2hue` function.
-
-![Screenshot](docs/hue_color_swatch_example.jpg)
+![Screenshot](docs/palette_50.jpg)

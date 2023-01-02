@@ -58,9 +58,22 @@ class TestImages(unittest.TestCase):
         extended_colors = images.get_extended_list(colors, [0, 0, 0], 3)
         np.testing.assert_array_equal(extended_colors, [[245, 138, 1], [0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
-    def test_show_hue_swatch(hue):
-        images.show_hue_swatch('VR')
+    def test_get_mid_hue(self):
+        self.assertEqual(images.get_mid_hue(38, 53), 8)
 
+    def test_is_out_of_RGB_gamut(self):
+        self.assertTrue(images.is_out_of_RGB_gamut(sRGBColor(0, 1.1, 0)))
+        self.assertFalse(images.is_out_of_RGB_gamut(sRGBColor(0, 1, 0)))
+
+    def test_get_rgb_colors_arr_with_hue(self):
+        rgb_colors = images.get_rgb_colors_arr_with_hue(0, 20, 'G')
+        np.testing.assert_array_equal(rgb_colors, [[0, 255, 128]])
+
+    def test_lch2rgb(self):
+        # close enough to [0, 196, 92]
+        np.testing.assert_array_equal(images.lch2rgb(69.647286,  75.498757, 147.558313).get_upscaled_value_tuple(), [0, 197, 90])
+
+        images.show_ch_swatch(50)
 
 if __name__ == "__main__":
     unittest.main()

@@ -20,6 +20,15 @@ def rgb2lch(r, g, b):
     lch_color = convert_color(lab_color, LCHabColor)
     return lch_color 
 
+def lch2rgb(l, c, h):
+    lch_color = LCHabColor(l, c, h)
+    lab_color = convert_color(lch_color, LabColor)
+    rgb_color = convert_color(lab_color, sRGBColor)
+    if is_out_of_RGB_gamut(rgb_color):
+        # filter out colors that are out of RGB gamut
+        rgb_color = sRGBColor(0, 0, 0)
+    return rgb_color
+
 def lch2hue(lch_color):
     h = lch_color.lch_h
 
@@ -169,6 +178,19 @@ def plot_cl(colors, color_name):
         plt.scatter([colors[i][0]], [colors[i][1]], color=color_name)
     plt.show()
 
+def get_mid_hue(hue_start, hue_end):
+    return round((hue_end - hue_start)/2)
+
+def is_out_RGB_range(component):
+    return component < 0 or component > 1
+
+# TODO: check scaled or not
+def is_out_of_RGB_gamut(rgb_color):
+    if is_out_RGB_range(rgb_color.rgb_r) or is_out_RGB_range(rgb_color.rgb_g) or is_out_RGB_range(rgb_color.rgb_g):
+        return True
+    return False
+
+# use RGB colors to get LCH colors
 def show_hue_swatch(hue):
     rgb_colors = get_rgb_colors_arr([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 255])
     filtered_rgb_colors = filter_rgb_colors_by_hue(rgb_colors, hue)
@@ -206,3 +228,30 @@ def show_hue_swatch(hue):
 
     image = concat_images(labeled_images, (100, 100), (len(hue_colors), max_chroma_items))
     image.show()
+
+def show_ch_swatch(chroma):
+    hues = [15, 30, 45, 60, 70, 85, 95, 105, 120, 140, 150, 170, 190, 210, 225, 240, 250, 265, 275, 290, 300, 315, 330, 350]
+    l_range = [0, 5, 10, 15, 25, 35, 40, 50, 60, 65, 75, 85, 90, 95, 100]
+    rgb_colors = []
+
+    for hue in hues:
+        colors = []
+        for l in l_range:
+            lch_color = LCHabColor(l, chroma, hue)
+            rgb_color = lch2rgb(lch_color.lch_l, lch_color.lch_c, lch_color.lch_h)
+            if (is_out_of_RGB_gamut(rgb_color)):
+                colors.append(sRGBColor(0, 0, 0))
+            else:
+                colors.append(rgb_color)
+
+        rgb_colors.append(colors)
+
+    labeled_images = []
+    for i in range(len(hues)):
+        for j in range(len(l_range)):
+            upscaled_rgb_color = sRGBColor(rgb_colors[i][j].rgb_r*255, rgb_colors[i][j].rgb_g*255, rgb_colors[i][j].rgb_b*255)
+            labeled_images.append(get_rgb_image_with_label(100, 100,  upscaled_rgb_color))
+
+    image = concat_images(labeled_images, (100, 100), (len(hues), len(l_range)))
+    image.show()
+
