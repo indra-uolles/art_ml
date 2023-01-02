@@ -47,7 +47,20 @@ class TestImages(unittest.TestCase):
     def test_get_label_for_image(self):
         self.assertEqual(images.get_label_for_image(sRGBColor(0, 196, 92)), '0,196,92\n70,75,148')
         # compared lch result with with https://css.land/lch/
-        images.get_rgb_image_with_label(100, 100, sRGBColor(0, 196, 92)).show()
+        # images.get_rgb_image_with_label(100, 100, sRGBColor(0, 196, 92)).show()
+
+    def test_get_unique_l_values(self):
+        rgb_colors = [[126, 239, 160], [68, 240, 120], [115, 239, 153], [93, 240, 138]]
+        self.assertEqual(images.get_unique_l_values(rgb_colors), [86, 85, 84])
+
+    def test_get_extended_list(self):
+        colors = [[245, 138, 1]]
+        extended_colors = images.get_extended_list(colors, [0, 0, 0], 3)
+        np.testing.assert_array_equal(extended_colors, [[245, 138, 1], [0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
+    def test_show_hue_swatch(hue):
+        images.show_hue_swatch('VR')
+
 
 if __name__ == "__main__":
     unittest.main()
