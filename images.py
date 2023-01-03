@@ -97,30 +97,6 @@ def get_unique_l_values(rgb_colors):
 
     return l_values
 
-def filter_rgb_colors_by_hue(rgb_colors, hue):
-    filtered_rgb_colors = []
-    for rgb_color in rgb_colors:
-        lch_color = rgb2lch(rgb_color[0], rgb_color[1], rgb_color[2])
-        if (belongs_to_hue(lch_color, hue)):
-            filtered_rgb_colors.append(rgb_color)
-    return filtered_rgb_colors
-
-def filter_rgb_colors_by_lightness(rgb_colors, l, delta):
-    filtered_rgb_colors = []
-    for rgb_color in rgb_colors:
-        lch_color = rgb2lch(rgb_color[0], rgb_color[1], rgb_color[2])
-        if (abs(lch_color.lch_l - l) <= delta):
-            filtered_rgb_colors.append(rgb_color)
-    return filtered_rgb_colors
-
-def sort_rgb_colors_by_chroma(rgb_colors):
-    def compare(i1, i2):
-        lch_color1 = rgb2lch(i1[0], i1[1], i1[2])
-        lch_color2 = rgb2lch(i2[0], i2[1], i2[2])
-        return lch_color2.lch_c - lch_color1.lch_c
-    rgb_colors.sort(key=cmp_to_key(compare))
-    return rgb_colors
-
 def generate_rgb_image_arr(width, height, rgb_color):
     rgb_image = np.zeros((width, height, 3), dtype=np.uint8)
     for x in range(width):
@@ -150,11 +126,6 @@ def get_rgb_image_with_label(width, height, rgb_color):
     draw.text((20, 30), label, (255,255,255), font=font)
     return image
 
-def get_extended_list(list, element, size):
-    for i in range(size):
-        list.append(element)
-    return list
-
 def concat_images(images, size, shape=None):
     # Open images and resize them
     width, height = size
@@ -173,14 +144,6 @@ def concat_images(images, size, shape=None):
             image.paste(images[idx], offset)
     return image
 
-def plot_cl(colors, color_name):
-    for i in range(len(colors)):
-        plt.scatter([colors[i][0]], [colors[i][1]], color=color_name)
-    plt.show()
-
-def get_mid_hue(hue_start, hue_end):
-    return round((hue_end - hue_start)/2)
-
 def is_out_RGB_range(component):
     return component < 0 or component > 1
 
@@ -189,45 +152,6 @@ def is_out_of_RGB_gamut(rgb_color):
     if is_out_RGB_range(rgb_color.rgb_r) or is_out_RGB_range(rgb_color.rgb_g) or is_out_RGB_range(rgb_color.rgb_b):
         return True
     return False
-
-# use RGB colors to get LCH colors
-def show_hue_swatch(hue):
-    rgb_colors = get_rgb_colors_arr([0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 255])
-    filtered_rgb_colors = filter_rgb_colors_by_hue(rgb_colors, hue)
-    l_values = get_unique_l_values(filtered_rgb_colors)
-    max_chroma_items = 0
-    for l in l_values:
-        chroma_items = len(filter_rgb_colors_by_lightness(filtered_rgb_colors, l, 0.05))
-        if (chroma_items > max_chroma_items):
-            max_chroma_items = chroma_items
-
-    hue_colors = []
-
-    for l in l_values:
-        l_filtered_rgb_colors = filter_rgb_colors_by_lightness(filtered_rgb_colors, l, 0.05)
-
-        if (len(l_filtered_rgb_colors) == 0):
-            continue
-
-        l_filtered_rgb_colors = sort_rgb_colors_by_chroma(l_filtered_rgb_colors)
-        chroma_items = len(l_filtered_rgb_colors)
-        delta = max_chroma_items - chroma_items
-        
-        if (delta > 0):
-            l_filtered_rgb_colors = get_extended_list(l_filtered_rgb_colors, [0, 0, 0], delta)
-            for i in range(delta):
-                l_filtered_rgb_colors.append([0, 0, 0])
-        
-        hue_colors.append(l_filtered_rgb_colors)
-
-    labeled_images = []
-    for i in range(len(hue_colors)):
-        for j in range(max_chroma_items):
-            rgb_color = sRGBColor(hue_colors[i][j][0], hue_colors[i][j][1], hue_colors[i][j][2])
-            labeled_images.append(get_rgb_image_with_label(100, 100, rgb_color))
-
-    image = concat_images(labeled_images, (100, 100), (len(hue_colors), max_chroma_items))
-    image.show()
 
 def show_ch_swatch(chroma):
     hues = [15, 30, 45, 60, 70, 85, 95, 105, 120, 140, 150, 170, 190, 210, 225, 240, 250, 265, 275, 290, 300, 315, 330, 350]
