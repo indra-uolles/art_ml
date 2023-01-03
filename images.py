@@ -186,7 +186,7 @@ def is_out_RGB_range(component):
 
 # TODO: check scaled or not
 def is_out_of_RGB_gamut(rgb_color):
-    if is_out_RGB_range(rgb_color.rgb_r) or is_out_RGB_range(rgb_color.rgb_g) or is_out_RGB_range(rgb_color.rgb_g):
+    if is_out_RGB_range(rgb_color.rgb_r) or is_out_RGB_range(rgb_color.rgb_g) or is_out_RGB_range(rgb_color.rgb_b):
         return True
     return False
 
@@ -239,10 +239,7 @@ def show_ch_swatch(chroma):
         for l in l_range:
             lch_color = LCHabColor(l, chroma, hue)
             rgb_color = lch2rgb(lch_color.lch_l, lch_color.lch_c, lch_color.lch_h)
-            if (is_out_of_RGB_gamut(rgb_color)):
-                colors.append(sRGBColor(0, 0, 0))
-            else:
-                colors.append(rgb_color)
+            colors.append(rgb_color)
 
         rgb_colors.append(colors)
 

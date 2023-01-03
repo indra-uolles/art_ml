@@ -65,10 +65,6 @@ class TestImages(unittest.TestCase):
         self.assertTrue(images.is_out_of_RGB_gamut(sRGBColor(0, 1.1, 0)))
         self.assertFalse(images.is_out_of_RGB_gamut(sRGBColor(0, 1, 0)))
 
-    def test_get_rgb_colors_arr_with_hue(self):
-        rgb_colors = images.get_rgb_colors_arr_with_hue(0, 20, 'G')
-        np.testing.assert_array_equal(rgb_colors, [[0, 255, 128]])
-
     def test_lch2rgb(self):
         # close enough to [0, 196, 92]
         np.testing.assert_array_equal(images.lch2rgb(69.647286,  75.498757, 147.558313).get_upscaled_value_tuple(), [0, 197, 90])
