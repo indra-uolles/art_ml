@@ -1,5 +1,5 @@
-Use this code to get an idea of LCH
+## To get an idea of LCH
 
-`images.show_ch_swatch(x)` will show color palette for given chroma (saturation):
+`lch.show_ch_swatch(x)` will show LCH color palette for given chroma (saturation):
 
 ![Screenshot](docs/palette_50.jpg)
