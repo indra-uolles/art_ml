@@ -29,6 +29,49 @@ def lch2rgb(l, c, h):
         rgb_color = sRGBColor(0, 0, 0)
     return rgb_color
 
+def get_hue_ranges(hue):
+  hue_ranges = {
+    'VR': [0, 24],
+    'R': [24, 38],
+    'RO': [38, 53],
+    'O': [53, 65],
+    'YO': [65, 80],
+    'OY': [80, 90],
+    'Y': [90, 100],
+    'GY': [100, 115],
+    'YG': [115, 130],
+    'YG2': [130, 145],
+    'G': [145, 162],
+    'G2': [162, 180],
+    'BG': [180, 204],
+    'BG2': [204, 218],
+    'GB': [218, 233],
+    'GB2': [233, 245],
+    'B': [245, 260],
+    'B2': [260, 270],
+    'VB': [270, 280],
+    'VB2': [280, 295],
+    'BV': [295, 310],
+    'V': [310, 325],
+    'RV': [325, 340],
+    'VR': [340, 360],
+  }    
+  if hue in hue_ranges:
+    return hue_ranges[hue] 
+  else:
+    return None   
+
+def filter_colors_by_hue(lch_colors, hue): 
+    hue_ranges = get_hue_ranges(hue)
+    if hue_ranges:
+        filtered_colors = []
+        for lch_color in lch_colors:
+            if lch_color.lch_h >= hue_ranges[0] and lch_color.lch_h < hue_ranges[1]:
+                filtered_colors.append(lch_color)
+        return filtered_colors
+    else:
+        return None   
+
 def lch2hue(lch_color):
     h = lch_color.lch_h
 
@@ -125,6 +168,11 @@ def get_rgb_image_with_label(width, height, rgb_color):
     font = ImageFont.truetype("Arial", 15)
     draw.text((20, 30), label, (255,255,255), font=font)
     return image
+
+def get_rgb_image(width, height, rgb_color):
+    image_arr_rgb = generate_rgb_image_arr(width, height, rgb_color)
+    image = Image.fromarray(image_arr_rgb).convert('RGBA')
+    return image    
 
 def concat_images(images, size, shape=None):
     # Open images and resize them

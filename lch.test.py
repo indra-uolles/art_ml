@@ -8,6 +8,22 @@ from colormath.color_objects import LCHabColor, sRGBColor
 
 class TestImages(unittest.TestCase):
 
+    def test_get_hue_ranges(self):
+        self.assertEqual(lch.get_hue_ranges('VR'), [340, 360])
+
+    def test_filter_colors_by_hue(self):
+        # 3 reds and one green
+        def value(n):
+            return n.get_value_tuple()    
+        colors = [
+            LCHabColor(11, 32, 359),
+            LCHabColor(14, 36, 356),
+            LCHabColor(18, 41, 353),
+            LCHabColor(12, 14, 247),
+        ]
+        colors_values = list(map(value, lch.filter_colors_by_hue(colors, 'VR')))
+        np.testing.assert_allclose(colors_values, [LCHabColor(11, 32, 359).get_value_tuple(), LCHabColor(14, 36, 356).get_value_tuple(), LCHabColor(18, 41, 353).get_value_tuple()])    
+
     def test_get_rgb_colors_arr(self):
         rgb_colors = lch.get_rgb_colors_arr([0, 20])
         np.testing.assert_array_equal(rgb_colors, [[0, 0, 0], [0, 0, 20], [0, 20, 0], [0, 20, 20], [20, 0, 0], [20, 0, 20], [20, 20, 0], [20, 20, 20]])
@@ -43,7 +59,7 @@ class TestImages(unittest.TestCase):
         # close enough to [0, 196, 92]
         np.testing.assert_array_equal(lch.lch2rgb(69.647286,  75.498757, 147.558313).get_upscaled_value_tuple(), [0, 197, 90])
 
-        lch.show_ch_swatch(10)
+        lch.show_ch_swatch(40)
 
 if __name__ == "__main__":
     unittest.main()
