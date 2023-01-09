@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import lch
+import color_sys
 from PIL import Image, ImageFont, ImageDraw, ImageOps
 from colormath.color_objects import sRGBColor, LCHabColor, LabColor
 
@@ -17,7 +17,7 @@ def hue_hist(lch_colors):
     hist = {}
     size = len(lch_colors)
     for hue in hues:
-        filtered_colors = lch.filter_colors_by_hue(lch_colors, hue)
+        filtered_colors = color_sys.filter_colors_by_hue(lch_colors, hue)
         if (len(filtered_colors) == 0):
             hist[hue] = 0
         else:
@@ -56,9 +56,9 @@ def draw_hue_hist(data):
     for hue in data:
         lch_color = data[hue][0]
         l, c, h = lch_color.lch_l, lch_color.lch_c, lch_color.lch_h
-        rgb_color = lch.lch2rgb(l, c, h)
+        rgb_color = color_sys.lch2rgb(l, c, h)
         upscaled_rgb_color = sRGBColor(rgb_color.rgb_r*255, rgb_color.rgb_g*255, rgb_color.rgb_b*255)
-        _image = lch.get_rgb_image(100, int(scale*data[hue][1]*100), upscaled_rgb_color)
+        _image = color_sys.get_rgb_image(100, int(scale*data[hue][1]*100), upscaled_rgb_color)
         image.paste(_image, (0, offset))
         offset += int(image_height - data[hue][1]*scale)
 

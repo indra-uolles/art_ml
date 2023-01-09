@@ -224,3 +224,5 @@ def show_ch_swatch(chroma):
     image = concat_images(labeled_images, (100, 100), (len(hues), len(l_range)))
     image.show()
 
+def std_deviation_rgb(rgb_color):
+    return np.std([rgb_color.rgb_r/255, rgb_color.rgb_g/255, rgb_color.rgb_b/255])
