@@ -1,3 +1,7 @@
+## Getting started
+
+You might consider to install [conda](https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html) first.
+
 ## To get an idea of LCH
 
 `color_sys.show_ch_swatch(x)` will show LCH color palette for given chroma (saturation):
