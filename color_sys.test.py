@@ -76,10 +76,15 @@ class TestImages(unittest.TestCase):
 
         # eye hurting green
         self.assertEqual(color_sys.std_deviation_rgb(sRGBColor(23,212,74)), 0.31308758676411097)
-        lch_color_eye_hurting_green = color_sys.rgb2lch(200, 198, 200).get_value_tuple()
+        lch_color_eye_hurting_green = color_sys.rgb2lch(23,212,74).get_value_tuple()
         print('lch_color hurting green', str(lch_color_eye_hurting_green))
-        # (80.08821501569784, 1.3019778933573856, 324.2314996385326) lightness is high, chroma is low, but deviation is big, so 
+        # (74.67375822259342, 88.64935960491266, 142.06265494221583) lightness is high, chroma is high,
         # it's eye hurting
+
+    def test_chromatic_membership_degree(self):
+        self.assertEqual(color_sys.chromatic_membership_degree(sRGBColor(10, 10, 40)), 0)
+        self.assertEqual(color_sys.chromatic_membership_degree(sRGBColor(200, 198, 200)), 0)
+        self.assertEqual(color_sys.chromatic_membership_degree(sRGBColor(23,212,74)), 1)
 
 if __name__ == "__main__":
     unittest.main()

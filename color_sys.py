@@ -226,3 +226,16 @@ def show_ch_swatch(chroma):
 
 def std_deviation_rgb(rgb_color):
     return np.std([rgb_color.rgb_r/255, rgb_color.rgb_g/255, rgb_color.rgb_b/255])
+
+def chromatic_membership_degree(rgb_color):
+    a = 0.1
+    b = 0.2
+    std_color = std_deviation_rgb(rgb_color)
+    if std_color < a:
+        return 0
+    elif std_color >= a and std_color < (a+b)/2:
+        return 2*pow((std_color-a)/(b-a), 2)
+    elif std_color >= (a+b)/2 and std_color < b:
+        return 1 - 2*pow((std_color-a)/(b-a), 2)
+    elif std_color >= b:
+        return 1
